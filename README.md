@@ -1,6 +1,6 @@
 # `DateRangePicker` Component
 
-`DateRangePicker` is a reusable component built for [Shadcn](https://ui.shadcn.com/) using beautifully designed components from [Radix UI](https://www.radix-ui.com/) and [Tailwind CSS](https://tailwindcss.com/). It provides a dropdown interface to allow users to select or enter a range of dates and includes additional options such as preset date ranges and an optional date comparison feature.
+`DateRangePicker` is a reusable component built for [Shadcn](https://ui.shadcn.com/) using beautifully designed components from [Radix UI](https://www.radix-ui.com/) and [Tailwind CSS](https://tailwindcss.com/). It provides a dropdown interface to allow users to select or enter a range of dates and includes additional options such as preset date ranges, an optional date comparison feature, and built-in internationalization support.
 
 [View the Demo](https://date-range-picker-for-shadcn-demo.vercel.app/)
 
@@ -40,10 +40,13 @@ Next, copy and paste the code from the `/src` directory for [`DateInput`](https:
 | `initialCompareFrom` | Date or string | - | The initial start date for the compare date range. |
 | `initialCompareTo` | Date or string | - | The initial end date for the compare date range. |
 | `align` | string | `'end'` | The alignment of the dropdown popover. Options are `'start'`, `'center'`, or `'end'`. |
-| `locale` | string | `'en-US'` | The locale used for date formatting. |
+| `locale` | string | `'en-US'` | The locale used for date formatting and UI text language. Supported locales: `'en-US'`, `'pt-BR'`. |
 | `showCompare` | boolean | `true` | Whether to show the compare date range feature. |
+| `translations` | object | - | Custom translations to override default locale-based UI text. Allows partial overrides. |
 
-## Example
+## Examples
+
+### Basic Usage
 
 ```jsx
 <DateRangePicker
@@ -56,5 +59,74 @@ Next, copy and paste the code from the `/src` directory for [`DateInput`](https:
 />
 ```
 
-This example creates a `DateRangePicker` component with an initial date range from January 1, 2023 to December 31, 2023. The dropdown popover is aligned to the start of the trigger button, the dates are formatted according to the 'en-GB' locale, and the compare feature is hidden. The `onUpdate` function logs the selected date range to the console.
+This example creates a `DateRangePicker` component with an initial date range from January 1, 2023 to December 31, 2023. The dropdown popover is aligned to the start of the trigger button, the dates are formatted according to the 'en-GB' locale, and the compare feature is hidden.
+
+### Internationalization
+
+The component supports automatic UI translation based on the `locale` prop:
+
+```jsx
+// Portuguese Brazilian UI
+<DateRangePicker
+  locale="pt-BR"
+  onUpdate={(values) => console.log(values)}
+/>
+```
+
+### Custom Translations
+
+You can override specific UI text using the `translations` prop:
+
+```jsx
+// Portuguese with custom overrides
+<DateRangePicker
+  locale="pt-BR"
+  translations={{
+    presets: { today: 'Hoje mesmo' },
+    actions: { update: 'Aplicar' }
+  }}
+  onUpdate={(values) => console.log(values)}
+/>
+
+// Custom English translations
+<DateRangePicker
+  translations={{
+    presets: { 
+      today: 'Right Now',
+      last7: 'Past Week' 
+    },
+    actions: { 
+      update: 'Apply Changes',
+      cancel: 'Discard' 
+    }
+  }}
+  onUpdate={(values) => console.log(values)}
+/>
+```
+
+### Translation Object Structure
+
+```typescript
+interface TranslationObject {
+  presets: {
+    today: string
+    yesterday: string
+    last7: string
+    last14: string
+    last30: string
+    thisWeek: string
+    lastWeek: string
+    thisMonth: string
+    lastMonth: string
+  }
+  actions: {
+    update: string
+    compare: string
+    cancel: string
+  }
+  labels: {
+    selectPlaceholder: string
+  }
+}
+```
 

@@ -18,6 +18,83 @@ import { Switch } from './switch'
 import { ChevronUpIcon, ChevronDownIcon, CheckIcon } from '@radix-ui/react-icons'
 import { cn } from '@/lib/utils'
 
+interface TranslationObject {
+  presets: {
+    today: string
+    yesterday: string
+    last7: string
+    last14: string
+    last30: string
+    thisWeek: string
+    lastWeek: string
+    thisMonth: string
+    lastMonth: string
+  }
+  actions: {
+    update: string
+    compare: string
+    cancel: string
+  }
+  labels: {
+    selectPlaceholder: string
+  }
+}
+
+const LOCALE_TRANSLATIONS: Record<string, TranslationObject> = {
+  'en-US': {
+    presets: {
+      today: 'Today',
+      yesterday: 'Yesterday',
+      last7: 'Last 7 days',
+      last14: 'Last 14 days',
+      last30: 'Last 30 days',
+      thisWeek: 'This Week',
+      lastWeek: 'Last Week',
+      thisMonth: 'This Month',
+      lastMonth: 'Last Month'
+    },
+    actions: {
+      update: 'Update',
+      compare: 'Compare',
+      cancel: 'Cancel'
+    },
+    labels: {
+      selectPlaceholder: 'Select...'
+    }
+  },
+  'pt-BR': {
+    presets: {
+      today: 'Hoje',
+      yesterday: 'Ontem',
+      last7: 'Últimos 7 dias',
+      last14: 'Últimos 14 dias',
+      last30: 'Últimos 30 dias',
+      thisWeek: 'Esta Semana',
+      lastWeek: 'Semana Passada',
+      thisMonth: 'Este Mês',
+      lastMonth: 'Mês Passado'
+    },
+    actions: {
+      update: 'Atualizar',
+      compare: 'Comparar',
+      cancel: 'Cancelar'
+    },
+    labels: {
+      selectPlaceholder: 'Selecionar...'
+    }
+  }
+}
+
+const getTranslations = (locale: string = 'en-US', customTranslations?: Partial<TranslationObject>): TranslationObject => {
+  const baseTranslations = LOCALE_TRANSLATIONS[locale] || LOCALE_TRANSLATIONS['en-US']
+
+  return {
+    presets: { ...baseTranslations.presets, ...customTranslations?.presets },
+    actions: { ...baseTranslations.actions, ...customTranslations?.actions },
+    labels: { ...baseTranslations.labels, ...customTranslations?.labels }
+  }
+}
+
 export interface DateRangePickerProps {
   /** Click handler for applying the updates from DateRangePicker. */
   onUpdate?: (values: { range: DateRange, rangeCompare?: DateRange }) => void
@@ -35,6 +112,8 @@ export interface DateRangePickerProps {
   locale?: string
   /** Option for showing compare feature */
   showCompare?: boolean
+  /** Custom translations to override default locale-based translations */
+  translations?: Partial<TranslationObject>
 }
 
 const formatDate = (date: Date, locale: string = 'en-us'): string => {
@@ -69,17 +148,17 @@ interface Preset {
   label: string
 }
 
-// Define presets
-const PRESETS: Preset[] = [
-  { name: 'today', label: 'Today' },
-  { name: 'yesterday', label: 'Yesterday' },
-  { name: 'last7', label: 'Last 7 days' },
-  { name: 'last14', label: 'Last 14 days' },
-  { name: 'last30', label: 'Last 30 days' },
-  { name: 'thisWeek', label: 'This Week' },
-  { name: 'lastWeek', label: 'Last Week' },
-  { name: 'thisMonth', label: 'This Month' },
-  { name: 'lastMonth', label: 'Last Month' }
+// Function to get presets with translations
+const getPresets = (translations: TranslationObject): Preset[] => [
+  { name: 'today', label: translations.presets.today },
+  { name: 'yesterday', label: translations.presets.yesterday },
+  { name: 'last7', label: translations.presets.last7 },
+  { name: 'last14', label: translations.presets.last14 },
+  { name: 'last30', label: translations.presets.last30 },
+  { name: 'thisWeek', label: translations.presets.thisWeek },
+  { name: 'lastWeek', label: translations.presets.lastWeek },
+  { name: 'thisMonth', label: translations.presets.thisMonth },
+  { name: 'lastMonth', label: translations.presets.lastMonth }
 ]
 
 /** The DateRangePicker component allows a user to select a range of dates */
@@ -93,8 +172,11 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   onUpdate,
   align = 'end',
   locale = 'en-US',
-  showCompare = true
+  showCompare = true,
+  translations: customTranslations
 }): JSX.Element => {
+  const translations = getTranslations(locale, customTranslations)
+  const PRESETS = getPresets(translations)
   const [isOpen, setIsOpen] = useState(false)
 
   const [range, setRange] = useState<DateRange>({
@@ -224,14 +306,14 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
     for (const preset of PRESETS) {
       const presetRange = getPresetRange(preset.name)
 
-      const normalizedRangeFrom = new Date(range.from);
-      normalizedRangeFrom.setHours(0, 0, 0, 0);
+      const normalizedRangeFrom = new Date(range.from)
+      normalizedRangeFrom.setHours(0, 0, 0, 0)
       const normalizedPresetFrom = new Date(
         presetRange.from.setHours(0, 0, 0, 0)
       )
 
-      const normalizedRangeTo = new Date(range.to ?? 0);
-      normalizedRangeTo.setHours(0, 0, 0, 0);
+      const normalizedRangeTo = new Date(range.to ?? 0)
+      normalizedRangeTo.setHours(0, 0, 0, 0)
       const normalizedPresetTo = new Date(
         presetRange.to?.setHours(0, 0, 0, 0) ?? 0
       )
@@ -402,7 +484,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                       }}
                       id="compare-mode"
                     />
-                    <Label htmlFor="compare-mode">Compare</Label>
+                    <Label htmlFor="compare-mode">{translations.actions.compare}</Label>
                   </div>
                 )}
                 <div className="flex flex-col gap-2">
@@ -479,7 +561,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               { isSmallScreen && (
                 <Select defaultValue={selectedPreset} onValueChange={(value) => { setPreset(value) }}>
                   <SelectTrigger className="w-[180px] mx-auto mb-2">
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder={translations.labels.selectPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     {PRESETS.map((preset) => (
@@ -534,7 +616,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
             }}
             variant="ghost"
           >
-            Cancel
+            {translations.actions.cancel}
           </Button>
           <Button
             onClick={() => {
@@ -547,7 +629,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               }
             }}
           >
-            Update
+            {translations.actions.update}
           </Button>
         </div>
       </PopoverContent>
