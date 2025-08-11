@@ -140,4 +140,124 @@ describe('DateRangePicker', () => {
       }
     })
   })
+
+  describe('Translations', () => {
+    it('should render with default English translations', () => {
+      const { getByRole, getAllByRole } = render(<DateRangePicker initialDateFrom="2023-01-01" initialDateTo="2023-12-31" />)
+      
+      // Click to open popover
+      const triggerButton = getAllByRole('button', { name: /Jan 1, 2023 - Dec 31, 2023/i })[0]
+      fireEvent.click(triggerButton)
+      
+      // Check English preset labels
+      expect(getByRole('button', { name: /Today/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Yesterday/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Last 7 days/i })).toBeInTheDocument()
+      
+      // Check English action buttons
+      expect(getByRole('button', { name: /Update/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Cancel/i })).toBeInTheDocument()
+      
+      // Check English compare label 
+      expect(getByRole('switch', { name: /Compare/i })).toBeInTheDocument()
+    })
+
+    it('should render with Portuguese translations when locale is pt-BR', () => {
+      const { getByRole, getAllByRole } = render(
+        <DateRangePicker 
+          locale="pt-BR" 
+          initialDateFrom="2023-01-01" 
+          initialDateTo="2023-12-31" 
+        />
+      )
+      
+      // Click to open popover
+      const triggerButton = getAllByRole('button')[0]
+      fireEvent.click(triggerButton)
+      
+      // Check Portuguese preset labels
+      expect(getByRole('button', { name: /Hoje/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Ontem/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Últimos 7 dias/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Esta Semana/i })).toBeInTheDocument()
+      
+      // Check Portuguese action buttons
+      expect(getByRole('button', { name: /Atualizar/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Cancelar/i })).toBeInTheDocument()
+      
+      // Check Portuguese compare label
+      expect(getByRole('switch', { name: /Comparar/i })).toBeInTheDocument()
+    })
+
+    it('should override specific translations with custom translations prop', () => {
+      const { getByRole, getAllByRole } = render(
+        <DateRangePicker 
+          locale="pt-BR"
+          translations={{
+            presets: { today: 'Hoje mesmo' },
+            actions: { update: 'Aplicar' }
+          }}
+          initialDateFrom="2023-01-01" 
+          initialDateTo="2023-12-31" 
+        />
+      )
+      
+      // Click to open popover
+      const triggerButton = getAllByRole('button')[0]
+      fireEvent.click(triggerButton)
+      
+      // Check custom overrides
+      expect(getByRole('button', { name: /Hoje mesmo/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Aplicar/i })).toBeInTheDocument()
+      
+      // Check that non-overridden Portuguese translations are still used
+      expect(getByRole('button', { name: /Ontem/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Cancelar/i })).toBeInTheDocument()
+    })
+
+    it('should fallback to English when unsupported locale is used', () => {
+      const { getByRole, getAllByRole } = render(
+        <DateRangePicker 
+          locale="fr-FR" 
+          initialDateFrom="2023-01-01" 
+          initialDateTo="2023-12-31" 
+        />
+      )
+      
+      // Click to open popover
+      const triggerButton = getAllByRole('button')[0]
+      fireEvent.click(triggerButton)
+      
+      // Should fallback to English translations
+      expect(getByRole('button', { name: /Today/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Yesterday/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Update/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Cancel/i })).toBeInTheDocument()
+    })
+
+    it('should use custom English translations when only translations prop is provided', () => {
+      const { getByRole, getAllByRole } = render(
+        <DateRangePicker 
+          translations={{
+            presets: { today: 'Right Now' },
+            actions: { update: 'Apply Changes', cancel: 'Discard' }
+          }}
+          initialDateFrom="2023-01-01" 
+          initialDateTo="2023-12-31" 
+        />
+      )
+      
+      // Click to open popover
+      const triggerButton = getAllByRole('button')[0]
+      fireEvent.click(triggerButton)
+      
+      // Check custom English overrides
+      expect(getByRole('button', { name: /Right Now/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Apply Changes/i })).toBeInTheDocument()
+      expect(getByRole('button', { name: /Discard/i })).toBeInTheDocument()
+      
+      // Check that non-overridden English translations are still used
+      expect(getByRole('button', { name: /Yesterday/i })).toBeInTheDocument()
+    })
+  })
 })

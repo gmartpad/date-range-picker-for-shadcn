@@ -1,7 +1,7 @@
 {
   "name": "shadcn-date-range-picker",
   "version": "1.1.1",
-  "description": "DateRangePicker is a reusable component for shadcn using Radix UI and Tailwind CSS. Includes preset date ranges, text entry, calendar selection and date comparison.",
+  "description": "DateRangePicker is a reusable component for shadcn using Radix UI and Tailwind CSS. Includes preset date ranges, text entry, calendar selection, date comparison, and internationalization support.",
   "main": "index.js",
   "scripts": {
     "test": "jest",
