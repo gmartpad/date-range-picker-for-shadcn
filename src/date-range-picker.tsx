@@ -500,6 +500,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                           to: toDate
                         }))
                       }}
+                      locale={locale}
                     />
                     <div className="py-1">-</div>
                     <DateInput
@@ -512,6 +513,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                           to: date
                         }))
                       }}
+                      locale={locale}
                     />
                   </div>
                   {rangeCompare != null && (
@@ -536,6 +538,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                             })
                           }
                         }}
+                        locale={locale}
                       />
                       <div className="py-1">-</div>
                       <DateInput
@@ -553,6 +556,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                             })
                           }
                         }}
+                        locale={locale}
                       />
                     </div>
                   )}
