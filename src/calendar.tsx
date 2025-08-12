@@ -70,12 +70,12 @@ function Calendar ({
           'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
         ),
         day_selected:
-          'bg-indigo-500 hover:bg-indigo-500 focus:bg-indigo-500 text-white rounded-md',
+          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-md',
         day_today: 'bg-accent text-accent-foreground',
         day_outside: 'text-muted-foreground opacity-40 invisible',
         day_disabled: 'text-muted-foreground opacity-40',
         day_range_middle:
-          'aria-selected:bg-indigo-100 aria-selected:text-indigo-800 rounded-none',
+          'aria-selected:bg-primary/10 aria-selected:text-primary rounded-none',
         day_hidden: 'invisible',
         ...classNames
       }}
