@@ -77,9 +77,9 @@ function Calendar ({
         day_range_middle:
           'aria-selected:bg-primary/10 aria-selected:text-primary rounded-none',
         day_range_start:
-          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground !rounded-r-none',
+          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-r-none',
         day_range_end:
-          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground !rounded-l-none',
+          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-l-none',
         day_hidden: 'invisible',
         ...classNames
       }}
