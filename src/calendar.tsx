@@ -70,7 +70,7 @@ function Calendar ({
           'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
         ),
         day_selected:
-          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-md',
+          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground',
         day_today: 'bg-accent text-accent-foreground',
         day_outside: 'text-muted-foreground opacity-40 invisible',
         day_disabled: 'text-muted-foreground opacity-40',
