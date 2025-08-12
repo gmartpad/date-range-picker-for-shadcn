@@ -615,6 +615,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               resetValues()
             }}
             variant="ghost"
+            className="rounded-md"
           >
             {translations.actions.cancel}
           </Button>
