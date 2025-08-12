@@ -114,6 +114,8 @@ export interface DateRangePickerProps {
   showCompare?: boolean
   /** Custom translations to override default locale-based translations */
   translations?: Partial<TranslationObject>
+  /** Position of preset buttons: 'left', 'right', or 'none' */
+  presetPosition?: 'left' | 'right' | 'none'
 }
 
 const formatDate = (date: Date, locale: string = 'en-us'): string => {
@@ -173,7 +175,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   align = 'end',
   locale = 'en-US',
   showCompare = true,
-  translations: customTranslations
+  translations: customTranslations,
+  presetPosition = 'right'
 }): JSX.Element => {
   const translations = getTranslations(locale, customTranslations)
   const PRESETS = getPresets(translations)
@@ -445,6 +448,20 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
       </PopoverTrigger>
       <PopoverContent align={align} className="w-auto">
         <div className="flex py-2">
+          {!isSmallScreen && presetPosition === 'left' && (
+            <div className="flex flex-col items-start gap-1 pr-6 pl-2 pb-6">
+              <div className="flex w-full flex-col items-start gap-1 pr-6 pl-2 pb-6">
+                {PRESETS.map((preset) => (
+                  <PresetButton
+                    key={preset.name}
+                    preset={preset.name}
+                    label={preset.label}
+                    isSelected={selectedPreset === preset.name}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex">
             <div className="flex flex-col">
               <div className="flex flex-col lg:flex-row gap-2 px-3 justify-end items-center lg:items-start pb-4 lg:pb-0">
@@ -562,7 +579,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                   )}
                 </div>
               </div>
-              { isSmallScreen && (
+              { isSmallScreen && presetPosition !== 'none' && (
                 <Select defaultValue={selectedPreset} onValueChange={(value) => { setPreset(value) }}>
                   <SelectTrigger className="w-[180px] mx-auto mb-2">
                     <SelectValue placeholder={translations.labels.selectPlaceholder} />
@@ -598,7 +615,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               </div>
             </div>
           </div>
-          {!isSmallScreen && (
+          {!isSmallScreen && presetPosition === 'right' && (
             <div className="flex flex-col items-end gap-1 pr-2 pl-6 pb-6">
               <div className="flex w-full flex-col items-end gap-1 pr-2 pl-6 pb-6">
                 {PRESETS.map((preset) => (
