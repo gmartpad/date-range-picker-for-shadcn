@@ -16,7 +16,7 @@ import {
 } from './select'
 import { Switch } from './switch'
 import { ChevronUpIcon, ChevronDownIcon, CheckIcon } from '@radix-ui/react-icons'
-import { cn } from '@/lib/utils'
+import { cn } from '../lib/utils'
 
 interface TranslationObject {
   presets: {
