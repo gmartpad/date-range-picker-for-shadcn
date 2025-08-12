@@ -593,6 +593,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                       )
                     )
                   }
+                  customLocale={locale}
                 />
               </div>
             </div>
