@@ -620,7 +620,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               resetValues()
             }}
             variant="ghost"
-            className="rounded-md"
+            className="rounded-md hover:bg-muted active:bg-muted/80"
           >
             {translations.actions.cancel}
           </Button>
