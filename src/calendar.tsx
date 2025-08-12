@@ -55,7 +55,7 @@ function Calendar ({
         nav: 'space-x-1 flex items-center',
         nav_button: cn(
           buttonVariants({ variant: 'outline' }),
-          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-md font-medium'
+          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
         ),
         nav_button_previous: 'absolute left-1',
         nav_button_next: 'absolute right-1',
@@ -70,22 +70,18 @@ function Calendar ({
           'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
         ),
         day_selected:
-          'bg-primary hover:bg-primary focus:bg-primary text-primary-foreground',
+          'bg-indigo-500 hover:bg-indigo-500 focus:bg-indigo-500 text-white rounded-md',
         day_today: 'bg-accent text-accent-foreground',
         day_outside: 'text-muted-foreground opacity-40 invisible',
         day_disabled: 'text-muted-foreground opacity-40',
         day_range_middle:
-          'aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none',
-        day_range_start:
-          'bg-primary hover:bg-primary focus:bg-primary text-primary-foreground rounded-l-md',
-        day_range_end:
-          'bg-primary hover:bg-primary focus:bg-primary text-primary-foreground rounded-r-md',
+          'aria-selected:bg-indigo-100 aria-selected:text-indigo-800 rounded-none',
         day_hidden: 'invisible',
         ...classNames
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-6 w-6" />,
-        IconRight: ({ ...props }) => <ChevronRightIcon className="h-6 w-6" />
+        IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
+        IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />
       }}
       {...restProps}
     />
