@@ -7,18 +7,46 @@ import { DayPicker } from 'react-day-picker'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from './button'
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+interface CalendarLocale {
+  weekdayNames: string[]
+  monthNames: string[]
+}
+
+const CALENDAR_LOCALES: Record<string, CalendarLocale> = {
+  'en-US': {
+    weekdayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  },
+  'pt-BR': {
+    weekdayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+    monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+  }
+}
+
+const getCalendarLocale = (locale: string = 'en-US'): CalendarLocale => {
+  return CALENDAR_LOCALES[locale] || CALENDAR_LOCALES['en-US']
+}
+
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  customLocale?: string
+}
 
 function Calendar ({
   className,
   classNames,
   showOutsideDays = true,
-  ...props
+  customLocale = 'en-US',
+  ...restProps
 }: CalendarProps): JSX.Element {
+  const calendarLocale = getCalendarLocale(customLocale)
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
+      formatters={{
+        formatCaption: (date) => `${calendarLocale.monthNames[date.getMonth()]} ${date.getFullYear()}`,
+        formatWeekdayName: (date) => calendarLocale.weekdayNames[date.getDay()].substring(0, 2)
+      }}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
@@ -59,7 +87,7 @@ function Calendar ({
         IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />
       }}
-      {...props}
+      {...restProps}
     />
   )
 }
