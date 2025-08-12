@@ -76,6 +76,10 @@ function Calendar ({
         day_disabled: 'text-muted-foreground opacity-40',
         day_range_middle:
           'aria-selected:bg-primary/10 aria-selected:text-primary rounded-none',
+        day_range_start:
+          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-l-md',
+        day_range_end:
+          'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-r-md',
         day_hidden: 'invisible',
         ...classNames
       }}
