@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react'
 interface DateInputProps {
   value?: Date
   onChange: (date: Date) => void
+  locale?: string
 }
 
 interface DateParts {
@@ -11,7 +12,15 @@ interface DateParts {
   year: number
 }
 
-const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
+// Helper function to determine if locale uses DD/MM/YYYY format
+const usesDayMonthYear = (locale: string): boolean => {
+  // Locales that typically use DD/MM/YYYY format
+  const dayFirstLocales = ['pt-BR', 'pt-PT', 'en-GB', 'en-AU', 'fr-FR', 'de-DE', 'es-ES', 'it-IT', 'nl-NL', 'sv-SE', 'da-DK', 'nb-NO']
+  return dayFirstLocales.some(l => locale.startsWith(l.split('-')[0]) && locale !== 'en-US')
+}
+
+const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US' }) => {
+  const isDayFirst = usesDayMonthYear(locale)
   const [date, setDate] = React.useState<DateParts>(() => {
     const d = value ? new Date(value) : new Date()
     return {
@@ -179,8 +188,13 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
             e.currentTarget.selectionEnd === e.currentTarget.value.length)
         ) {
           e.preventDefault()
-          if (field === 'month') dayRef.current?.focus()
-          if (field === 'day') yearRef.current?.focus()
+          if (isDayFirst) {
+            if (field === 'day') monthRef.current?.focus()
+            if (field === 'month') yearRef.current?.focus()
+          } else {
+            if (field === 'month') dayRef.current?.focus()
+            if (field === 'day') yearRef.current?.focus()
+          }
         }
       } else if (e.key === 'ArrowLeft') {
         if (
@@ -189,67 +203,98 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
             e.currentTarget.selectionEnd === e.currentTarget.value.length)
         ) {
           e.preventDefault()
-          if (field === 'day') monthRef.current?.focus()
-          if (field === 'year') dayRef.current?.focus()
+          if (isDayFirst) {
+            if (field === 'month') dayRef.current?.focus()
+            if (field === 'year') monthRef.current?.focus()
+          } else {
+            if (field === 'day') monthRef.current?.focus()
+            if (field === 'year') dayRef.current?.focus()
+          }
         }
       }
     }
 
+  const dayInput = (
+    <input
+      type="text"
+      ref={dayRef}
+      max={31}
+      maxLength={2}
+      value={date.day.toString()}
+      onChange={handleInputChange('day')}
+      onKeyDown={handleKeyDown('day')}
+      onFocus={(e) => {
+        if (window.innerWidth > 1024) {
+          e.target.select()
+        }
+      }}
+      onBlur={handleBlur('day')}
+      className="p-0 outline-none w-7 border-none text-center"
+      placeholder="D"
+    />
+  )
+
+  const monthInput = (
+    <input
+      type="text"
+      ref={monthRef}
+      max={12}
+      maxLength={2}
+      value={date.month.toString()}
+      onChange={handleInputChange('month')}
+      onKeyDown={handleKeyDown('month')}
+      onFocus={(e) => {
+        if (window.innerWidth > 1024) {
+          e.target.select()
+        }
+      }}
+      onBlur={handleBlur('month')}
+      className="p-0 outline-none w-6 border-none text-center"
+      placeholder="M"
+    />
+  )
+
+  const yearInput = (
+    <input
+      type="text"
+      ref={yearRef}
+      max={9999}
+      maxLength={4}
+      value={date.year.toString()}
+      onChange={handleInputChange('year')}
+      onKeyDown={handleKeyDown('year')}
+      onFocus={(e) => {
+        if (window.innerWidth > 1024) {
+          e.target.select()
+        }
+      }}
+      onBlur={handleBlur('year')}
+      className="p-0 outline-none w-12 border-none text-center"
+      placeholder="YYYY"
+    />
+  )
+
   return (
     <div className="flex border rounded-lg items-center text-sm px-1">
-      <input
-        type="text"
-        ref={monthRef}
-        max={12}
-        maxLength={2}
-        value={date.month.toString()}
-        onChange={handleInputChange('month')}
-        onKeyDown={handleKeyDown('month')}
-        onFocus={(e) => {
-          if (window.innerWidth > 1024) {
-            e.target.select()
-          }
-        }}
-        onBlur={handleBlur('month')}
-        className="p-0 outline-none w-6 border-none text-center"
-        placeholder="M"
-      />
-      <span className="opacity-20 -mx-px">/</span>
-      <input
-        type="text"
-        ref={dayRef}
-        max={31}
-        maxLength={2}
-        value={date.day.toString()}
-        onChange={handleInputChange('day')}
-        onKeyDown={handleKeyDown('day')}
-        onFocus={(e) => {
-          if (window.innerWidth > 1024) {
-            e.target.select()
-          }
-        }}
-        onBlur={handleBlur('day')}
-        className="p-0 outline-none w-7 border-none text-center"
-        placeholder="D"
-      />
-      <span className="opacity-20 -mx-px">/</span>
-      <input
-        type="text"
-        ref={yearRef}
-        max={9999}
-        maxLength={4}
-        value={date.year.toString()}
-        onChange={handleInputChange('year')}
-        onKeyDown={handleKeyDown('year')}
-        onFocus={(e) => {
-          if (window.innerWidth > 1024) {
-            e.target.select()
-          }
-        }}
-        onBlur={handleBlur('year')}
-        className="p-0 outline-none w-12 border-none text-center"
-        placeholder="YYYY"
-      />
+      {isDayFirst
+        ? (
+            <>
+              {dayInput}
+              <span className="opacity-20 -mx-px">/</span>
+              {monthInput}
+              <span className="opacity-20 -mx-px">/</span>
+              {yearInput}
+            </>
+          )
+        : (
+            <>
+              {monthInput}
+              <span className="opacity-20 -mx-px">/</span>
+              {dayInput}
+              <span className="opacity-20 -mx-px">/</span>
+              {yearInput}
+            </>
+          )}
     </div>
   )
 }
