@@ -377,7 +377,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
     isSelected: boolean
   }): JSX.Element => (
     <Button
-      className={cn(isSelected && 'pointer-events-none')}
+      className={cn(isSelected && 'pointer-events-none', 'hover:bg-primary/10 active:bg-primary/10')}
       variant="ghost"
       onClick={() => {
         setPreset(preset)
