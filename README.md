@@ -1,11 +1,22 @@
-# `DateRangePicker` Component
+# `@woli/date-range-picker` 
 
-`DateRangePicker` is a reusable component built for [Shadcn](https://ui.shadcn.com/) using beautifully designed components from [Radix UI](https://www.radix-ui.com/) and [Tailwind CSS](https://tailwindcss.com/). It provides a dropdown interface to allow users to select or enter a range of dates and includes additional options such as preset date ranges, an optional date comparison feature, and built-in internationalization support.
+Enhanced DateRangePicker component built for [Shadcn](https://ui.shadcn.com/) using [Radix UI](https://www.radix-ui.com/) and [Tailwind CSS](https://tailwindcss.com/). 
 
-[View the Demo](https://date-range-picker-for-shadcn-demo.vercel.app/)
+## ✨ Enhanced Features
 
+- **🌍 Portuguese Localization**: Complete pt-BR translation support
+- **📅 DD/MM/YYYY Format**: Automatic date format based on locale
+- **🎨 Improved Styling**: Better visual feedback and primary color integration
+- **📍 Flexible Preset Positioning**: Configure presets on left, right, or hide them completely
+- **🎯 Enhanced UX**: Improved switch visibility, hover states, and button styling
 
 ## Installation
+
+Install via npm:
+
+```bash
+npm install @woli/date-range-picker
+```
 
 The `DateRangePicker` depends on the following components from shadcn:
 
@@ -42,6 +53,7 @@ Next, copy and paste the code from the `/src` directory for [`DateInput`](https:
 | `align` | string | `'end'` | The alignment of the dropdown popover. Options are `'start'`, `'center'`, or `'end'`. |
 | `locale` | string | `'en-US'` | The locale used for date formatting and UI text language. Supported locales: `'en-US'`, `'pt-BR'`. |
 | `showCompare` | boolean | `true` | Whether to show the compare date range feature. |
+| `presetPosition` | string | `'right'` | Position of preset buttons: `'left'`, `'right'`, or `'none'`. |
 | `translations` | object | - | Custom translations to override default locale-based UI text. Allows partial overrides. |
 
 ## Examples
@@ -49,17 +61,40 @@ Next, copy and paste the code from the `/src` directory for [`DateInput`](https:
 ### Basic Usage
 
 ```jsx
+import { DateRangePicker } from '@woli/date-range-picker'
+
 <DateRangePicker
   onUpdate={(values) => console.log(values)}
   initialDateFrom="2023-01-01"
   initialDateTo="2023-12-31"
   align="start"
-  locale="en-GB"
+  locale="pt-BR"
   showCompare={false}
+  presetPosition="left"
 />
 ```
 
-This example creates a `DateRangePicker` component with an initial date range from January 1, 2023 to December 31, 2023. The dropdown popover is aligned to the start of the trigger button, the dates are formatted according to the 'en-GB' locale, and the compare feature is hidden.
+### Enhanced Usage Examples
+
+```jsx
+// Portuguese localization with DD/MM/YYYY format
+<DateRangePicker
+  locale="pt-BR"
+  onUpdate={(values) => console.log(values)}
+/>
+
+// Preset buttons on the left
+<DateRangePicker
+  presetPosition="left"
+  onUpdate={(values) => console.log(values)}
+/>
+
+// Hide preset buttons entirely
+<DateRangePicker
+  presetPosition="none"
+  onUpdate={(values) => console.log(values)}
+/>
+```
 
 ### Internationalization
 
