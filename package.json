@@ -1,7 +1,7 @@
 {
-  "name": "shadcn-date-range-picker",
-  "version": "1.1.1",
-  "description": "DateRangePicker is a reusable component for shadcn using Radix UI and Tailwind CSS. Includes preset date ranges, text entry, calendar selection, date comparison, and internationalization support.",
+  "name": "@woli/date-range-picker",
+  "version": "1.0.0",
+  "description": "Enhanced DateRangePicker component for shadcn with Portuguese localization, DD/MM/YYYY support, configurable preset positioning, and improved styling. Built with Radix UI and Tailwind CSS.",
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",
@@ -12,23 +12,29 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
-    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix"
+    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
+    "prepublishOnly": "npm run lint && npm test"
   },
   "keywords": [
     "shadcn",
     "tailwind",
     "radix",
     "calendar",
-    "datepicker"
+    "datepicker",
+    "react",
+    "date-range",
+    "portuguese",
+    "i18n",
+    "woli"
   ],
   "author": {
-    "name": "John Polacek",
-    "url": "https://johnpolacek.com"
+    "name": "Gabriel Martins Padoin",
+    "email": "contato.gabrielmartinspadoin@gmail.com"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnpolacek/your-package-name.git"
+    "url": "git+https://github.com/gmartpad/date-range-picker-for-shadcn.git"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
