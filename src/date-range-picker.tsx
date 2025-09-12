@@ -82,6 +82,48 @@ const LOCALE_TRANSLATIONS: Record<string, TranslationObject> = {
     labels: {
       selectPlaceholder: 'Selecionar...'
     }
+  },
+  pt: {
+    presets: {
+      today: 'Hoje',
+      yesterday: 'Ontem',
+      last7: 'Últimos 7 dias',
+      last14: 'Últimos 14 dias',
+      last30: 'Últimos 30 dias',
+      thisWeek: 'Esta Semana',
+      lastWeek: 'Semana Passada',
+      thisMonth: 'Este Mês',
+      lastMonth: 'Mês Passado'
+    },
+    actions: {
+      update: 'Actualizar',
+      compare: 'Comparar',
+      cancel: 'Cancelar'
+    },
+    labels: {
+      selectPlaceholder: 'Seleccionar...'
+    }
+  },
+  'es-ES': {
+    presets: {
+      today: 'Hoy',
+      yesterday: 'Ayer',
+      last7: 'Últimos 7 días',
+      last14: 'Últimos 14 días',
+      last30: 'Últimos 30 días',
+      thisWeek: 'Esta Semana',
+      lastWeek: 'Semana Pasada',
+      thisMonth: 'Este Mes',
+      lastMonth: 'Mes Pasado'
+    },
+    actions: {
+      update: 'Actualizar',
+      compare: 'Comparar',
+      cancel: 'Cancelar'
+    },
+    labels: {
+      selectPlaceholder: 'Seleccionar...'
+    }
   }
 }
 
