@@ -248,12 +248,12 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   const [selectedPreset, setSelectedPreset] = useState<string | undefined>(undefined)
 
   const [isSmallScreen, setIsSmallScreen] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < 960 : false
+    typeof window !== 'undefined' ? window.innerWidth < 800 : false
   )
 
   useEffect(() => {
     const handleResize = (): void => {
-      setIsSmallScreen(window.innerWidth < 960)
+      setIsSmallScreen(window.innerWidth < 800)
     }
 
     window.addEventListener('resize', handleResize)
@@ -488,8 +488,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align={align} className="w-auto">
-        <div className="flex py-2">
+      <PopoverContent align={align} className="w-auto p-2 xl:p-4">
+        <div className="flex">
           {!isSmallScreen && presetPosition === 'left' && (
             <div className="flex flex-col items-start gap-1 pr-6 pl-2 pb-6">
               <div className="flex w-full flex-col items-start gap-1 pr-6 pl-2 pb-6">
@@ -672,7 +672,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
             </div>
           )}
         </div>
-        <div className="flex justify-end gap-2 py-2 pr-4">
+        <div className="flex justify-end gap-1.5 xl:gap-2 py-2 pr-4">
           <Button
             onClick={() => {
               setIsOpen(false)
