@@ -15,7 +15,7 @@ import {
   SelectValue
 } from './select'
 import { Switch } from './switch'
-import { ChevronUpIcon, ChevronDownIcon, CheckIcon } from '@radix-ui/react-icons'
+import { ChevronUpIcon, ChevronDownIcon, CheckIcon, CalendarIcon } from '@radix-ui/react-icons'
 import { cn } from '@/lib/utils'
 
 interface TranslationObject {
@@ -248,12 +248,12 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   const [selectedPreset, setSelectedPreset] = useState<string | undefined>(undefined)
 
   const [isSmallScreen, setIsSmallScreen] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < 800 : false
+    typeof window !== 'undefined' ? window.innerWidth < 1024 : false
   )
 
   useEffect(() => {
     const handleResize = (): void => {
-      setIsSmallScreen(window.innerWidth < 800)
+      setIsSmallScreen(window.innerWidth < 1024)
     }
 
     window.addEventListener('resize', handleResize)
@@ -488,8 +488,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align={align} className="w-auto p-2 xl:p-4">
-        <div className="flex">
+      <PopoverContent align={align} className="w-auto p-1 xl:p-4">
+        <div className="flex pt-2">
           {!isSmallScreen && presetPosition === 'left' && (
             <div className="flex flex-col items-start gap-1 pr-6 pl-2 pb-6">
               <div className="flex w-full flex-col items-start gap-1 pr-6 pl-2 pb-6">
@@ -506,7 +506,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
           )}
           <div className="flex">
             <div className="flex flex-col">
-              <div className="flex flex-col lg:flex-row gap-2 px-3 justify-end items-center lg:items-start pb-4 lg:pb-0">
+              <div className="flex flex-col lg:flex-row gap-2 px-2 justify-end items-center lg:items-start pb-2 lg:pb-0">
                 {showCompare && (
                   <div className="flex items-center space-x-2 pr-4 py-1">
                     <Switch
@@ -622,18 +622,23 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                 </div>
               </div>
               { isSmallScreen && presetPosition !== 'none' && (
-                <Select defaultValue={selectedPreset} onValueChange={(value) => { setPreset(value) }}>
-                  <SelectTrigger className="w-[180px] mx-auto mb-2">
-                    <SelectValue placeholder={translations.labels.selectPlaceholder} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PRESETS.map((preset) => (
-                      <SelectItem key={preset.name} value={preset.name}>
-                        {preset.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="px-2">
+                  <Select defaultValue={selectedPreset} onValueChange={(value) => { setPreset(value) }}>
+                    <SelectTrigger className="w-full mb-2 border-primary/50 bg-primary/5 hover:bg-primary/10 font-medium">
+                      <div className="flex items-center gap-2">
+                        <CalendarIcon className="h-4 w-4 text-primary" />
+                        <SelectValue placeholder={translations.labels.selectPlaceholder} />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRESETS.map((preset) => (
+                        <SelectItem key={preset.name} value={preset.name}>
+                          {preset.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
               <div>
                 <Calendar
