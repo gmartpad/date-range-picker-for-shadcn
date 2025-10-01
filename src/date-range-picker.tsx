@@ -194,13 +194,13 @@ interface Preset {
 
 // Function to get presets with translations
 const getPresets = (translations: TranslationObject): Preset[] => [
-  { name: 'today', label: translations.presets.today },
+  // { name: 'today', label: translations.presets.today },
   { name: 'yesterday', label: translations.presets.yesterday },
   { name: 'last7', label: translations.presets.last7 },
-  { name: 'last14', label: translations.presets.last14 },
+  // { name: 'last14', label: translations.presets.last14 },
   { name: 'last30', label: translations.presets.last30 },
-  { name: 'thisWeek', label: translations.presets.thisWeek },
-  { name: 'lastWeek', label: translations.presets.lastWeek },
+  // { name: 'thisWeek', label: translations.presets.thisWeek },
+  // { name: 'lastWeek', label: translations.presets.lastWeek },
   { name: 'thisMonth', label: translations.presets.thisMonth },
   { name: 'lastMonth', label: translations.presets.lastMonth }
 ]
@@ -488,8 +488,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align={align} className="w-auto p-1 xl:p-4">
-        <div className="flex pt-2">
+      <PopoverContent align={align} className="w-auto p-1 pb-1 xl:p-4 xl:pb-0 max-h-[calc(100vh-180px)] flex flex-col overflow-hidden">
+        <div className="flex pt-2 overflow-y-auto flex-1 min-h-0">
           {!isSmallScreen && presetPosition === 'left' && (
             <div className="flex flex-col items-start gap-1 pr-6 pl-2 pb-6">
               <div className="flex w-full flex-col items-start gap-1 pr-6 pl-2 pb-6">
@@ -677,7 +677,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
             </div>
           )}
         </div>
-        <div className="flex justify-end gap-1.5 xl:gap-2 py-2 pr-4">
+        <div className="flex justify-end gap-1.5 xl:gap-2 py-2 pr-4 flex-shrink-0 border-t border-gray-200 bg-white">
           <Button
             onClick={() => {
               setIsOpen(false)
