@@ -1,6 +1,6 @@
 {
   "name": "@woli/date-range-picker",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Enhanced DateRangePicker component for shadcn with Portuguese localization, DD/MM/YYYY support, configurable preset positioning, and improved styling. Built with Radix UI and Tailwind CSS.",
   "main": "src/index.ts",
   "module": "src/index.ts",
