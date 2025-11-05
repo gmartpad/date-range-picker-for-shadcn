@@ -44,6 +44,7 @@ function Calendar ({
       showOutsideDays={showOutsideDays}
       className={cn('p-2 xl:p-3', className)}
       formatters={{
+        // eslint-disable-next-line
         formatCaption: (date) => `${calendarLocale.monthNames[date.getMonth()]} ${date.getFullYear()}`,
         formatWeekdayName: (date) => calendarLocale.weekdayNames[date.getDay()].substring(0, 2)
       }}
@@ -51,11 +52,11 @@ function Calendar ({
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
         caption: 'flex justify-center pt-1 relative items-center',
-        caption_label: 'text-sm font-medium',
+        caption_label: 'text-base font-semibold',
         nav: 'space-x-1 flex items-center',
         nav_button: cn(
           buttonVariants({ variant: 'outline' }),
-          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+          'h-8 w-8 bg-transparent p-0 opacity-80 hover:opacity-100 hover:bg-accent transition-all'
         ),
         nav_button_previous: 'absolute left-1',
         nav_button_next: 'absolute right-1',
@@ -64,18 +65,18 @@ function Calendar ({
         head_cell:
           'text-muted-foreground rounded-md w-7 xl:w-8 font-normal text-[0.8rem]',
         row: 'flex w-full mt-2 rounded-lg overflow-hidden',
-        cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
+        cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-primary/20 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
         day: cn(
           buttonVariants({ variant: 'ghost' }),
           'h-7 w-7 xl:h-8 xl:w-8 p-0 font-normal aria-selected:opacity-100'
         ),
         day_selected:
           'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground',
-        day_today: 'bg-accent text-accent-foreground',
+        day_today: 'font-semibold',
         day_outside: 'text-muted-foreground opacity-40 invisible',
-        day_disabled: 'text-muted-foreground opacity-40',
+        day_disabled: 'text-muted-foreground opacity-30 line-through bg-muted/30',
         day_range_middle:
-          'aria-selected:bg-primary/10 aria-selected:text-primary rounded-none',
+          'aria-selected:bg-primary/20 aria-selected:text-foreground aria-selected:font-medium rounded-none border-t border-b border-primary/20',
         day_range_start:
           'bg-primary hover:bg-primary/90 focus:bg-primary/90 text-primary-foreground rounded-l-md',
         day_range_end:
@@ -84,8 +85,8 @@ function Calendar ({
         ...classNames
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />
+        IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-5 w-5" />,
+        IconRight: ({ ...props }) => <ChevronRightIcon className="h-5 w-5" />
       }}
       {...restProps}
     />

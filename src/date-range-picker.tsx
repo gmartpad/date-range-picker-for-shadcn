@@ -15,7 +15,16 @@ import {
   SelectValue
 } from './select'
 import { Switch } from './switch'
-import { ChevronUpIcon, ChevronDownIcon, CheckIcon, CalendarIcon } from '@radix-ui/react-icons'
+import {
+  ChevronUpIcon,
+  ChevronDownIcon,
+  CheckIcon,
+  CalendarIcon,
+  ArrowLeftIcon,
+  DoubleArrowLeftIcon,
+  TimerIcon,
+  CounterClockwiseClockIcon
+} from '@radix-ui/react-icons'
 import { cn } from '@/lib/utils'
 
 interface TranslationObject {
@@ -127,6 +136,16 @@ const LOCALE_TRANSLATIONS: Record<string, TranslationObject> = {
   }
 }
 
+// Mapeamento de ícones para cada preset
+// eslint-disable-next-line
+const PRESET_ICONS: Record<string, React.ComponentType<{ width?: number; height?: number; className?: string }>> = {
+  yesterday: ArrowLeftIcon,
+  last7: DoubleArrowLeftIcon,
+  last30: TimerIcon,
+  thisMonth: CalendarIcon,
+  lastMonth: CounterClockwiseClockIcon
+}
+
 const getTranslations = (locale: string = 'en-US', customTranslations?: Partial<TranslationObject>): TranslationObject => {
   const baseTranslations = LOCALE_TRANSLATIONS[locale] || LOCALE_TRANSLATIONS['en-US']
 
@@ -158,6 +177,10 @@ export interface DateRangePickerProps {
   translations?: Partial<TranslationObject>
   /** Position of preset buttons: 'left', 'right', or 'none' */
   presetPosition?: 'left' | 'right' | 'none'
+  /** Minimum selectable date (defaults to first day of current year) */
+  minDate?: Date | string
+  /** Maximum selectable date (defaults to today) */
+  maxDate?: Date | string
 }
 
 const formatDate = (date: Date, locale: string = 'en-us'): string => {
@@ -218,10 +241,41 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   locale = 'en-US',
   showCompare = true,
   translations: customTranslations,
-  presetPosition = 'right'
+  presetPosition = 'right',
+  minDate: propMinDate,
+  maxDate: propMaxDate
 }): JSX.Element => {
   const translations = getTranslations(locale, customTranslations)
   const PRESETS = getPresets(translations)
+
+  // Calculate min and max dates from props or use defaults
+  const { minDate, maxDate } = React.useMemo(() => {
+    const now = new Date()
+
+    // Helper to convert string/Date to Date object
+    const parseDate = (date: Date | string | undefined, defaultDate: Date): Date => {
+      if (!date) return defaultDate
+      return typeof date === 'string' ? new Date(date) : date
+    }
+
+    // Default minDate: first day of current year at start of day
+    const defaultMinDate = new Date(now.getFullYear(), 0, 1)
+    defaultMinDate.setHours(0, 0, 0, 0)
+
+    // Default maxDate: today at end of day
+    const defaultMaxDate = new Date()
+    defaultMaxDate.setHours(23, 59, 59, 999)
+
+    // Use prop values or defaults
+    const min = parseDate(propMinDate, defaultMinDate)
+    const max = parseDate(propMaxDate, defaultMaxDate)
+
+    return {
+      minDate: min,
+      maxDate: max
+    }
+  }, [propMinDate, propMaxDate])
+
   const [isOpen, setIsOpen] = useState(false)
 
   const [range, setRange] = useState<DateRange>({
@@ -420,22 +474,31 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
     preset: string
     label: string
     isSelected: boolean
-  }): JSX.Element => (
-    <Button
-      className={cn(isSelected && 'pointer-events-none', 'hover:bg-primary/10 active:bg-primary/10')}
-      variant="ghost"
-      onClick={() => {
-        setPreset(preset)
-      }}
-    >
-      <>
-        <span className={cn('pr-2 opacity-0', isSelected && 'opacity-70')}>
-          <CheckIcon width={18} height={18} />
-        </span>
-        {label}
-      </>
-    </Button>
-  )
+  }): JSX.Element => {
+    const PresetIcon = PRESET_ICONS[preset] || CalendarIcon
+
+    return (
+      <Button
+        className={cn(
+          'transition-all duration-200 w-full justify-start',
+          isSelected && 'bg-primary/10 border-primary font-medium',
+          !isSelected && 'hover:bg-accent'
+        )}
+        variant="outline"
+        onClick={() => {
+          setPreset(preset)
+        }}
+      >
+        <>
+          <span className={cn('pr-2 opacity-0 transition-opacity', isSelected && 'opacity-100')}>
+            <CheckIcon width={18} height={18} />
+          </span>
+          <PresetIcon width={16} height={16} className="mr-2 flex-shrink-0 opacity-70" />
+          {label}
+        </>
+      </Button>
+    )
+  }
 
   // Helper function to check if two date ranges are equal
   const areRangesEqual = (a?: DateRange, b?: DateRange): boolean => {
@@ -560,6 +623,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                         }))
                       }}
                       locale={locale}
+                      minDate={minDate}
+                      maxDate={maxDate}
                     />
                     <div className="py-1">-</div>
                     <DateInput
@@ -573,6 +638,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                         }))
                       }}
                       locale={locale}
+                      minDate={minDate}
+                      maxDate={maxDate}
                     />
                   </div>
                   {rangeCompare != null && (
@@ -598,6 +665,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                           }
                         }}
                         locale={locale}
+                        minDate={minDate}
+                        maxDate={maxDate}
                       />
                       <div className="py-1">-</div>
                       <DateInput
@@ -616,6 +685,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                           }
                         }}
                         locale={locale}
+                        minDate={minDate}
+                        maxDate={maxDate}
                       />
                     </div>
                   )}
@@ -624,7 +695,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               { isSmallScreen && presetPosition !== 'none' && (
                 <div className="px-2">
                   <Select defaultValue={selectedPreset} onValueChange={(value) => { setPreset(value) }}>
-                    <SelectTrigger className="w-full mb-2 border-primary/50 bg-primary/5 hover:bg-primary/10 font-medium">
+                    <SelectTrigger className="w-full mb-2 border-primary/50 bg-primary/5 hover:bg-accent font-medium">
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-primary" />
                         <SelectValue placeholder={translations.labels.selectPlaceholder} />
@@ -658,6 +729,10 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                     )
                   }
                   customLocale={locale}
+                  disabled={[
+                    { before: minDate },
+                    { after: maxDate }
+                  ]}
                 />
               </div>
             </div>
@@ -677,14 +752,14 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
             </div>
           )}
         </div>
-        <div className="flex justify-end gap-1.5 xl:gap-2 py-2 pr-4 flex-shrink-0 border-t border-gray-200 bg-white">
+        <div className="flex justify-end gap-1.5 xl:gap-2 py-3 pr-4 flex-shrink-0 border-t-2 border-border shadow-sm">
           <Button
             onClick={() => {
               setIsOpen(false)
               resetValues()
             }}
             variant="ghost"
-            className="rounded-md hover:bg-muted active:bg-muted/80"
+            className="rounded-md"
           >
             {translations.actions.cancel}
           </Button>
@@ -695,7 +770,24 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                 !areRangesEqual(range, openedRangeRef.current) ||
                 !areRangesEqual(rangeCompare, openedRangeCompareRef.current)
               ) {
-                onUpdate?.({ range, rangeCompare })
+                // Validate and clamp dates to allowed range
+                const clampDate = (date: Date | undefined): Date | undefined => {
+                  if (!date) return date
+                  if (date < minDate) return minDate
+                  if (date > maxDate) return maxDate
+                  return date
+                }
+
+                const validFrom = clampDate(range.from)
+                const validTo = clampDate(range.to)
+
+                onUpdate?.({
+                  range: {
+                    from: validFrom,
+                    to: validTo
+                  },
+                  rangeCompare
+                })
               }
             }}
           >
