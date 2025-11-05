@@ -4,6 +4,8 @@ interface DateInputProps {
   value?: Date
   onChange: (date: Date) => void
   locale?: string
+  minDate?: Date
+  maxDate?: Date
 }
 
 interface DateParts {
@@ -19,7 +21,7 @@ const usesDayMonthYear = (locale: string): boolean => {
   return dayFirstLocales.some(l => locale.startsWith(l.split('-')[0]) && locale !== 'en-US')
 }
 
-const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US' }) => {
+const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US', minDate, maxDate }) => {
   const isDayFirst = usesDayMonthYear(locale)
   const [date, setDate] = React.useState<DateParts>(() => {
     const d = value ? new Date(value) : new Date()
@@ -33,8 +35,12 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
   const monthRef = useRef<HTMLInputElement | null>(null)
   const dayRef = useRef<HTMLInputElement | null>(null)
   const yearRef = useRef<HTMLInputElement | null>(null)
+  const isEditingRef = useRef<boolean>(false)
 
   useEffect(() => {
+    // Don't sync with parent value while user is actively editing
+    if (isEditingRef.current) return
+
     const d = value ? new Date(value) : new Date()
     setDate({
       day: d.getDate(),
@@ -62,17 +68,35 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
 
   const handleInputChange =
     (field: keyof DateParts) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      // Mark that user is actively editing
+      isEditingRef.current = true
+
       const newValue = e.target.value ? Number(e.target.value) : ''
+
+      // Validate BEFORE updating state
       const isValid = typeof newValue === 'number' && validateDate(field, newValue)
 
-      // If the new value is valid, update the date
-      const newDate = { ...date, [field]: newValue }
-      setDate(newDate)
-
-      // only call onChange when the entry is valid
-      if (isValid) {
-        onChange(new Date(newDate.year, newDate.month - 1, newDate.day))
+      if (!isValid) {
+        // Keep old value if invalid - don't update state
+        return
       }
+
+      // Build tentative date with typed value
+      const newDate = { ...date, [field]: newValue }
+      const tentativeDate = new Date(newDate.year, newDate.month - 1, newDate.day)
+
+      // Pre-emptive boundary check - reject invalid dates before updating state
+      if (minDate && tentativeDate < minDate) {
+        return // Don't accept dates before minDate
+      }
+
+      if (maxDate && tentativeDate > maxDate) {
+        return // Don't accept dates after maxDate
+      }
+
+      // All validations passed - accept the input
+      setDate(newDate)
+      onChange(tentativeDate)
     }
 
   const initialDate = useRef<DateParts>(date)
@@ -80,6 +104,9 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
   const handleBlur = (field: keyof DateParts) => (
     e: React.FocusEvent<HTMLInputElement>
   ): void => {
+    // User finished editing, allow parent sync again
+    isEditingRef.current = false
+
     if (!e.target.value) {
       setDate(initialDate.current)
       return
@@ -93,6 +120,30 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
     } else {
       // If the new value is valid, update the initial value
       initialDate.current = { ...date, [field]: newValue }
+
+      // Validate against min/max date boundaries
+      const newDate = { ...date, [field]: newValue }
+      const finalDate = new Date(newDate.year, newDate.month - 1, newDate.day)
+
+      // Clamp date to valid range
+      let clampedDate = finalDate
+      if (minDate && finalDate < minDate) {
+        clampedDate = minDate
+      } else if (maxDate && finalDate > maxDate) {
+        clampedDate = maxDate
+      }
+
+      // If date was clamped, update state and notify parent
+      if (clampedDate.getTime() !== finalDate.getTime()) {
+        const clampedParts = {
+          day: clampedDate.getDate(),
+          month: clampedDate.getMonth() + 1,
+          year: clampedDate.getFullYear()
+        }
+        setDate(clampedParts)
+        initialDate.current = clampedParts
+        onChange(clampedDate)
+      }
     }
   }
 
@@ -229,7 +280,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
         }
       }}
       onBlur={handleBlur('day')}
-      className="p-0 outline-none w-7 border-none text-center"
+      className="p-0 outline-none w-7 border-none text-center bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
       placeholder="D"
     />
   )
@@ -249,7 +300,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
         }
       }}
       onBlur={handleBlur('month')}
-      className="p-0 outline-none w-6 border-none text-center"
+      className="p-0 outline-none w-6 border-none text-center bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
       placeholder="M"
     />
   )
@@ -269,29 +320,29 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
         }
       }}
       onBlur={handleBlur('year')}
-      className="p-0 outline-none w-12 border-none text-center"
+      className="p-0 outline-none w-12 border-none text-center bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
       placeholder="YYYY"
     />
   )
 
   return (
-    <div className="flex border rounded-lg items-center text-sm px-1">
+    <div className="flex border-2 border-border bg-card/50 text-foreground rounded-lg items-center text-sm px-2 py-1 shadow-sm hover:border-primary/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-colors">
       {isDayFirst
         ? (
             <>
               {dayInput}
-              <span className="opacity-20 -mx-px">/</span>
+              <span className="text-muted-foreground/70 text-xs font-medium -mx-px">/</span>
               {monthInput}
-              <span className="opacity-20 -mx-px">/</span>
+              <span className="text-muted-foreground/70 text-xs font-medium -mx-px">/</span>
               {yearInput}
             </>
           )
         : (
             <>
               {monthInput}
-              <span className="opacity-20 -mx-px">/</span>
+              <span className="text-muted-foreground/70 text-xs font-medium -mx-px">/</span>
               {dayInput}
-              <span className="opacity-20 -mx-px">/</span>
+              <span className="text-muted-foreground/70 text-xs font-medium -mx-px">/</span>
               {yearInput}
             </>
           )}
