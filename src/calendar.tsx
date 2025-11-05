@@ -44,6 +44,7 @@ function Calendar ({
       showOutsideDays={showOutsideDays}
       className={cn('p-2 xl:p-3', className)}
       formatters={{
+        // eslint-disable-next-line
         formatCaption: (date) => `${calendarLocale.monthNames[date.getMonth()]} ${date.getFullYear()}`,
         formatWeekdayName: (date) => calendarLocale.weekdayNames[date.getDay()].substring(0, 2)
       }}
