@@ -622,6 +622,22 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                           to: toDate
                         }))
                       }}
+                      onBlur={(validatedDate) => {
+                        // After blur validation, re-validate entire range
+                        let validFrom = validatedDate
+                        let validTo = range.to
+
+                        // Clamp both dates to min/max boundaries
+                        if (minDate && validFrom < minDate) validFrom = minDate
+                        if (maxDate && validFrom > maxDate) validFrom = maxDate
+                        if (minDate && validTo < minDate) validTo = minDate
+                        if (maxDate && validTo > maxDate) validTo = maxDate
+
+                        // Update state if any changes occurred
+                        if (validFrom.getTime() !== validatedDate.getTime() || validTo.getTime() !== range.to.getTime()) {
+                          setRange({ from: validFrom, to: validTo })
+                        }
+                      }}
                       locale={locale}
                       minDate={minDate}
                       maxDate={maxDate}
@@ -636,6 +652,22 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                           from: fromDate,
                           to: date
                         }))
+                      }}
+                      onBlur={(validatedDate) => {
+                        // After blur validation, re-validate entire range
+                        let validFrom = range.from
+                        let validTo = validatedDate
+
+                        // Clamp both dates to min/max boundaries
+                        if (minDate && validFrom < minDate) validFrom = minDate
+                        if (maxDate && validFrom > maxDate) validFrom = maxDate
+                        if (minDate && validTo < minDate) validTo = minDate
+                        if (maxDate && validTo > maxDate) validTo = maxDate
+
+                        // Update state if any changes occurred
+                        if (validFrom.getTime() !== range.from.getTime() || validTo.getTime() !== validatedDate.getTime()) {
+                          setRange({ from: validFrom, to: validTo })
+                        }
                       }}
                       locale={locale}
                       minDate={minDate}
@@ -664,6 +696,24 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                             })
                           }
                         }}
+                        onBlur={(validatedDate) => {
+                          if (rangeCompare) {
+                            // After blur validation, re-validate compare range
+                            let validFrom = validatedDate
+                            let validTo = rangeCompare.to
+
+                            // Clamp both dates to min/max boundaries
+                            if (minDate && validFrom < minDate) validFrom = minDate
+                            if (maxDate && validFrom > maxDate) validFrom = maxDate
+                            if (minDate && validTo < minDate) validTo = minDate
+                            if (maxDate && validTo > maxDate) validTo = maxDate
+
+                            // Update state if any changes occurred
+                            if (validFrom.getTime() !== validatedDate.getTime() || validTo.getTime() !== rangeCompare.to.getTime()) {
+                              setRangeCompare({ from: validFrom, to: validTo })
+                            }
+                          }
+                        }}
                         locale={locale}
                         minDate={minDate}
                         maxDate={maxDate}
@@ -682,6 +732,24 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                               from: compareFromDate,
                               to: date
                             })
+                          }
+                        }}
+                        onBlur={(validatedDate) => {
+                          if (rangeCompare) {
+                            // After blur validation, re-validate compare range
+                            let validFrom = rangeCompare.from
+                            let validTo = validatedDate
+
+                            // Clamp both dates to min/max boundaries
+                            if (minDate && validFrom < minDate) validFrom = minDate
+                            if (maxDate && validFrom > maxDate) validFrom = maxDate
+                            if (minDate && validTo < minDate) validTo = minDate
+                            if (maxDate && validTo > maxDate) validTo = maxDate
+
+                            // Update state if any changes occurred
+                            if (validFrom.getTime() !== rangeCompare.from.getTime() || validTo.getTime() !== validatedDate.getTime()) {
+                              setRangeCompare({ from: validFrom, to: validTo })
+                            }
                           }
                         }}
                         locale={locale}

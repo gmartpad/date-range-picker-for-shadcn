@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react'
 interface DateInputProps {
   value?: Date
   onChange: (date: Date) => void
+  onBlur?: (validatedDate: Date) => void
   locale?: string
   minDate?: Date
   maxDate?: Date
@@ -21,7 +22,7 @@ const usesDayMonthYear = (locale: string): boolean => {
   return dayFirstLocales.some(l => locale.startsWith(l.split('-')[0]) && locale !== 'en-US')
 }
 
-const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US', minDate, maxDate }) => {
+const DateInput: React.FC<DateInputProps> = ({ value, onChange, onBlur, locale = 'en-US', minDate, maxDate }) => {
   const isDayFirst = usesDayMonthYear(locale)
   const [date, setDate] = React.useState<DateParts>(() => {
     const d = value ? new Date(value) : new Date()
@@ -71,32 +72,39 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
       // Mark that user is actively editing
       isEditingRef.current = true
 
-      const newValue = e.target.value ? Number(e.target.value) : ''
+      const inputValue = e.target.value
 
-      // Validate BEFORE updating state
-      const isValid = typeof newValue === 'number' && validateDate(field, newValue)
+      // Option 2: Allow any numeric input during typing, validate only on blur
+      // Accept empty input or any valid number format
+      if (inputValue === '' || /^\d+$/.test(inputValue)) {
+        const newValue = inputValue === '' ? 0 : Number(inputValue)
 
-      if (!isValid) {
-        // Keep old value if invalid - don't update state
-        return
+        // Update state immediately without validation
+        const newDate = { ...date, [field]: newValue }
+        setDate(newDate)
+
+        // Try to create a valid date and notify parent if successful
+        try {
+          const tentativeDate = new Date(newDate.year, newDate.month - 1, newDate.day)
+
+          // Fix Issue 2: Verify date wasn't auto-corrected by JavaScript (e.g., Nov 31 → Dec 1)
+          const isDateCorrect =
+            tentativeDate.getFullYear() === newDate.year &&
+            tentativeDate.getMonth() + 1 === newDate.month &&
+            tentativeDate.getDate() === newDate.day
+
+          // Fix Issue 3: Validate year is within reasonable range (1000-9999)
+          // Prevents partial years (2, 20, 202) from corrupting date range
+          const hasReasonableYear = newDate.year >= 1000 && newDate.year <= 9999
+
+          // Only notify parent if date is valid, not auto-corrected, AND has reasonable year
+          if (!isNaN(tentativeDate.getTime()) && isDateCorrect && hasReasonableYear) {
+            onChange(tentativeDate)
+          }
+        } catch {
+          // Ignore errors during intermediate states
+        }
       }
-
-      // Build tentative date with typed value
-      const newDate = { ...date, [field]: newValue }
-      const tentativeDate = new Date(newDate.year, newDate.month - 1, newDate.day)
-
-      // Pre-emptive boundary check - reject invalid dates before updating state
-      if (minDate && tentativeDate < minDate) {
-        return // Don't accept dates before minDate
-      }
-
-      if (maxDate && tentativeDate > maxDate) {
-        return // Don't accept dates after maxDate
-      }
-
-      // All validations passed - accept the input
-      setDate(newDate)
-      onChange(tentativeDate)
     }
 
   const initialDate = useRef<DateParts>(date)
@@ -109,6 +117,10 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
 
     if (!e.target.value) {
       setDate(initialDate.current)
+      // Notify parent when reverting to initial date
+      const revertedDate = new Date(initialDate.current.year, initialDate.current.month - 1, initialDate.current.day)
+      onChange(revertedDate)
+      onBlur?.(revertedDate)
       return
     }
 
@@ -117,6 +129,10 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
 
     if (!isValid) {
       setDate(initialDate.current)
+      // Notify parent when reverting to initial date
+      const revertedDate = new Date(initialDate.current.year, initialDate.current.month - 1, initialDate.current.day)
+      onChange(revertedDate)
+      onBlur?.(revertedDate)
     } else {
       // If the new value is valid, update the initial value
       initialDate.current = { ...date, [field]: newValue }
@@ -143,6 +159,10 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, locale = 'en-US'
         setDate(clampedParts)
         initialDate.current = clampedParts
         onChange(clampedDate)
+        onBlur?.(clampedDate)
+      } else {
+        // Date was valid and not clamped
+        onBlur?.(finalDate)
       }
     }
   }
