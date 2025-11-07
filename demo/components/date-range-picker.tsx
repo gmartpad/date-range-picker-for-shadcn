@@ -244,7 +244,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   presetPosition = 'right',
   minDate: propMinDate,
   maxDate: propMaxDate
-}): React.JSX.Element => {
+}): JSX.Element => {
   const translations = getTranslations(locale, customTranslations)
   const PRESETS = getPresets(translations)
 
@@ -296,8 +296,8 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
   )
 
   // Refs to store the values of range and rangeCompare when the date picker is opened
-  const openedRangeRef = useRef<DateRange | undefined>(undefined)
-  const openedRangeCompareRef = useRef<DateRange | undefined>(undefined)
+  const openedRangeRef = useRef<DateRange | undefined>()
+  const openedRangeCompareRef = useRef<DateRange | undefined>()
 
   const [selectedPreset, setSelectedPreset] = useState<string | undefined>(undefined)
 
@@ -474,7 +474,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
     preset: string
     label: string
     isSelected: boolean
-  }): React.JSX.Element => {
+  }): JSX.Element => {
     const PresetIcon = PRESET_ICONS[preset] || CalendarIcon
 
     return (
